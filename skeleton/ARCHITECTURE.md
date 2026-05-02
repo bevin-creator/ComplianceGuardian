@@ -1,4 +1,4 @@
-# ComplianceGuard — Architecture
+# Compliance Guard — Architecture
 
 ## Flow
 

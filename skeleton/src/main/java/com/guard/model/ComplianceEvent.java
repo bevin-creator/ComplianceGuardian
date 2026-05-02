@@ -1,6 +1,7 @@
 package com.guard.model;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public class ComplianceEvent {
 
@@ -21,6 +22,11 @@ public class ComplianceEvent {
     public ComplianceEvent() {}
 
     public ComplianceEvent(EventType eventType, String sourceId, Object payload) {
-        // TODO: generate eventId, traceId, set receivedAt
+        this.eventId = UUID.randomUUID().toString();
+        this.traceId = UUID.randomUUID().toString();
+        this.eventType = eventType;
+        this.sourceId = sourceId;
+        this.payload = payload;
+        this.receivedAt = Instant.now();
     }
 }

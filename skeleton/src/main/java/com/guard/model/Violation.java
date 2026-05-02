@@ -19,6 +19,16 @@ public class Violation {
     public Violation() {}
 
     public Violation(Type type, String description, String traceId) {
-        // TODO: implementation
+        this.type = type;
+        this.description = description;
+        this.traceId = traceId;
+        this.explanation = null; // Set by AI service if available
+    }
+
+    public Violation(Type type, String description, String traceId, String explanation) {
+        this.type = type;
+        this.description = description;
+        this.traceId = traceId;
+        this.explanation = explanation;
     }
 }
