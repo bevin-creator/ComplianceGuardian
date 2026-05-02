@@ -18,4 +18,8 @@ public interface SecretsConfig {
     @WithName("high-risk-countries")
     @WithDefault("IR,KP,SY,CU,SD,MM,LY,SO,YE,AF")
     String highRiskCountries();
+
+    @WithName("orchestrate.api-key")
+    @WithDefault("MOCK_KEY")
+    String orchestrateApiKey();
 }
