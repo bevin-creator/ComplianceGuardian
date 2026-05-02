@@ -13,11 +13,24 @@ public class ScanResult {
     public ScanResult() {}
 
     public ScanResult(String traceId, String eventId, List<Violation> violations, double riskScore) {
-        // TODO: set fields, derive riskLevel from riskScore
+        this.traceId = traceId;
+        this.eventId = eventId;
+        this.violations = violations;
+        this.riskScore = riskScore;
+        this.riskLevel = resolveRiskLevel(riskScore);
     }
 
     private String resolveRiskLevel(double score) {
-        // TODO: implementation
-        return null;
+        // Risk levels based on compliance requirements:
+        // >= 0.75 → HIGH
+        // >= 0.40 → MEDIUM
+        // < 0.40 → LOW
+        if (score >= 0.75) {
+            return "HIGH";
+        } else if (score >= 0.40) {
+            return "MEDIUM";
+        } else {
+            return "LOW";
+        }
     }
 }
