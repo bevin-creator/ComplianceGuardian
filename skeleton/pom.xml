@@ -81,12 +81,6 @@
             <artifactId>quarkus-smallrye-fault-tolerance</artifactId>
         </dependency>
 
-        <!-- CORS for frontend integration -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-cors</artifactId>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>io.quarkus</groupId>
