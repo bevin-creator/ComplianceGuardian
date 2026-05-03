@@ -36,5 +36,14 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+if (import.meta.env.DEV) {
+  useAuthStore.getState().setUser({
+    id: 'dev-user-1',
+    email: 'demo@complianceguard.com',
+    name: 'Demo User',
+    role: 'analyst',
+  });
+  useAuthStore.getState().setToken('dev-token-123');
+}
 
 // Made with Bob

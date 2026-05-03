@@ -18,10 +18,11 @@ class ApiService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: '/api',
+      baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: false, // Set to false for dev, true if using cookies
     });
 
     // Request interceptor to add auth token
@@ -50,6 +51,17 @@ class ApiService {
   }
 
   // Authentication
+  async register(data: {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    role: string;
+  }): Promise<ApiResponse<User>> {
+    const response = await this.api.post('/auth/register', data);
+    return response.data;
+  }
+
   async login(email: string, password: string): Promise<ApiResponse<User>> {
     const response = await this.api.post('/auth/login', { email, password });
     return response.data;

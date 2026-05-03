@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import apiService from '@/services/api';
@@ -107,9 +107,15 @@ const Login = () => {
               Sign In
             </Button>
 
-            <div className="pt-4 border-t border-dark-700">
+            <div className="pt-4 border-t border-dark-700 space-y-3">
               <p className="text-sm text-dark-400 text-center">
                 Demo Credentials: <span className="text-dark-300">demo@complianceguard.com</span> / <span className="text-dark-300">demo123</span>
+              </p>
+              <p className="text-sm text-dark-400 text-center">
+                Don't have an account?{' '}
+                <Link to="/register" className="text-primary-500 hover:text-primary-400 font-medium">
+                  Sign Up
+                </Link>
               </p>
             </div>
           </form>
