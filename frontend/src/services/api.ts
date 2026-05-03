@@ -95,10 +95,16 @@ class ApiService {
     return response.data;
   }
 
-  async uploadTransactions(file: File): Promise<ApiResponse<{ processed: number }>> {
-    const formData = new FormData();
-    formData.append('file', file);
-    const response = await this.api.post('/upload', formData, {
+  async uploadTransactions(formData: FormData): Promise<ApiResponse<{
+    batchId: string;
+    totalRecords: number;
+    successfulRecords: number;
+    failedRecords: number;
+    errors: string[];
+    startTime: string;
+    endTime: string;
+  }>> {
+    const response = await this.api.post('/transactions/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
@@ -204,8 +210,14 @@ class ApiService {
     return response.data;
   }
 
-  async generateReport(type: string, params?: Record<string, any>): Promise<ApiResponse<Report>> {
-    const response = await this.api.post('/reports/generate', { type, params });
+  async generateReport(config: {
+    reportType: string;
+    dateFrom: string;
+    dateTo: string;
+    format: string;
+    filters: Record<string, any>;
+  }): Promise<ApiResponse<Report>> {
+    const response = await this.api.post('/reports/generate', config);
     return response.data;
   }
 

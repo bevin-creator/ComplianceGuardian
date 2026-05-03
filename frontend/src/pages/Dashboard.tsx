@@ -1,8 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { 
-  ArrowLeftRight, 
-  AlertTriangle, 
-  TrendingUp, 
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  ArrowLeftRight,
+  AlertTriangle,
+  TrendingUp,
   FolderOpen,
   Shield,
   Upload
@@ -13,11 +14,16 @@ import AlertItem from '@/components/dashboard/AlertItem';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import TransactionUploadModal from '@/components/upload/TransactionUploadModal';
+import { useToast } from '@/components/ui/ToastContainer';
 import { formatNumber, formatPercentage } from '@/utils/format';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   // Fetch dashboard metrics
   const { data: metricsData, isLoading: metricsLoading } = useQuery({
@@ -41,17 +47,12 @@ const Dashboard = () => {
   const alerts = alertsData?.data?.data || [];
   const activities = activityData?.data?.data || [];
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      try {
-        await apiService.uploadTransactions(file);
-        // Refetch metrics after upload
-        window.location.reload();
-      } catch (error) {
-        console.error('Upload failed:', error);
-      }
-    }
+  const handleUploadSuccess = () => {
+    // Refetch all dashboard data
+    queryClient.invalidateQueries({ queryKey: ['metrics'] });
+    queryClient.invalidateQueries({ queryKey: ['alerts'] });
+    queryClient.invalidateQueries({ queryKey: ['activity'] });
+    showToast('Dashboard data refreshed successfully', 'success');
   };
 
   return (
@@ -65,21 +66,10 @@ const Dashboard = () => {
           </p>
         </div>
         
-        <div className="flex items-center space-x-3">
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <div className="btn btn-primary inline-flex items-center">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Transactions
-            </div>
-            <input
-              id="file-upload"
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-          </label>
-        </div>
+        <Button onClick={() => setUploadModalOpen(true)}>
+          <Upload className="w-4 h-4 mr-2" />
+          Upload Transactions
+        </Button>
       </div>
 
       {/* Compliance Health Index */}
@@ -91,12 +81,12 @@ const Dashboard = () => {
             </p>
             <div className="flex items-baseline space-x-2">
               <span className="text-5xl font-bold text-white">
-                {metrics?.complianceScore || 94.8}
+                {metricsLoading ? '...' : (metrics?.complianceScore?.toFixed(1) || '0.0')}
               </span>
               <span className="text-2xl text-primary-400">/ 100</span>
             </div>
             <p className="text-sm text-dark-400 mt-2">
-              System operating within acceptable parameters
+              {metricsLoading ? 'Loading...' : 'System operating within acceptable parameters'}
             </p>
           </div>
           <div className="text-right">
@@ -109,33 +99,33 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricsCard
           title="Total Transactions"
-          value={formatNumber(metrics?.totalTransactions || 12847)}
-          change={8.2}
-          trend="up"
+          value={metricsLoading ? '...' : formatNumber(metrics?.totalTransactions || 0)}
+          change={0}
+          trend="neutral"
           icon={ArrowLeftRight}
           iconColor="text-blue-500"
         />
         <MetricsCard
           title="Flagged Transactions"
-          value={formatNumber(metrics?.flaggedTransactions || 234)}
-          change={-12.5}
-          trend="down"
+          value={metricsLoading ? '...' : formatNumber(metrics?.flaggedTransactions || 0)}
+          change={0}
+          trend="neutral"
           icon={AlertTriangle}
           iconColor="text-red-500"
         />
         <MetricsCard
           title="Open Cases"
-          value={formatNumber(metrics?.openCases || 18)}
-          change={5.3}
-          trend="up"
+          value={metricsLoading ? '...' : formatNumber(metrics?.openCases || 0)}
+          change={0}
+          trend="neutral"
           icon={FolderOpen}
           iconColor="text-yellow-500"
         />
         <MetricsCard
           title="Compliance Score"
-          value={formatPercentage(metrics?.complianceScore || 94.8)}
-          change={2.1}
-          trend="up"
+          value={metricsLoading ? '...' : formatPercentage(metrics?.complianceScore || 0)}
+          change={0}
+          trend="neutral"
           icon={TrendingUp}
           iconColor="text-green-500"
         />
@@ -202,7 +192,7 @@ const Dashboard = () => {
             <Shield className="w-5 h-5 text-red-400" />
           </div>
           <p className="text-3xl font-bold text-white mb-2">
-            {metrics?.amlViolations || 89}
+            {metricsLoading ? '...' : (metrics?.violationBreakdown?.AML || 0)}
           </p>
           <p className="text-sm text-dark-500">Detected this month</p>
         </Card>
@@ -213,7 +203,7 @@ const Dashboard = () => {
             <Shield className="w-5 h-5 text-yellow-400" />
           </div>
           <p className="text-3xl font-bold text-white mb-2">
-            {metrics?.kycDeficiencies || 45}
+            {metricsLoading ? '...' : (metrics?.violationBreakdown?.KYC || 0)}
           </p>
           <p className="text-sm text-dark-500">Pending review</p>
         </Card>
@@ -224,11 +214,17 @@ const Dashboard = () => {
             <Shield className="w-5 h-5 text-orange-400" />
           </div>
           <p className="text-3xl font-bold text-white mb-2">
-            {metrics?.baselBreaches || 12}
+            {metricsLoading ? '...' : (metrics?.violationBreakdown?.BASEL || 0)}
           </p>
           <p className="text-sm text-dark-500">Capital ratio alerts</p>
         </Card>
       </div>
+
+      <TransactionUploadModal
+        isOpen={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        onSuccess={handleUploadSuccess}
+      />
     </div>
   );
 };

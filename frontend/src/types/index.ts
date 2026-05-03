@@ -97,11 +97,10 @@ export interface DashboardMetrics {
   flaggedTransactions: number;
   complianceScore: number;
   openCases: number;
-  resolvedCases: number;
-  criticalAlerts: number;
-  amlViolations: number;
-  kycDeficiencies: number;
-  baselBreaches: number;
+  resolvedCases?: number;
+  criticalAlerts?: number;
+  activeAlerts?: number;
+  violationBreakdown?: Record<string, number>;
 }
 
 export interface RiskHeatmapData {

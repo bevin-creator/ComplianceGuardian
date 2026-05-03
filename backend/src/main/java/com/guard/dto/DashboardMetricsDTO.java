@@ -11,6 +11,11 @@ public class DashboardMetricsDTO {
     public BigDecimal complianceScore;
     public TrendData transactionTrend;
     public TrendData alertTrend;
+    
+    // Violation breakdown
+    public long amlViolations;
+    public long kycDeficiencies;
+    public long baselBreaches;
 
     public static class TrendData {
         public String direction; // UP, DOWN, STABLE
