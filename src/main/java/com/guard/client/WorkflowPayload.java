@@ -14,6 +14,4 @@ public record WorkflowPayload(
     String eventType,
     String summary,
     List<ViolationDetail> violations
-) {}
 
-// Made with Bob

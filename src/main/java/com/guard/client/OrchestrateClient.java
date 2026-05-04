@@ -30,5 +30,3 @@ public interface OrchestrateClient {
         WorkflowPayload payload
     );
 }
-
-// Made with Bob

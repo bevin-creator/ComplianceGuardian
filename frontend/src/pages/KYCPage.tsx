@@ -104,4 +104,4 @@ export const KYCPage: React.FC = () => {
   );
 };
 
-// Made with Bob
+

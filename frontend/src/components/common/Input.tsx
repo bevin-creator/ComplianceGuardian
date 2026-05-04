@@ -28,4 +28,4 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-// Made with Bob
+

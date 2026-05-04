@@ -57,4 +57,4 @@ export const Alert: React.FC<AlertProps> = ({ type, message, onClose }) => {
   );
 };
 
-// Made with Bob
+
